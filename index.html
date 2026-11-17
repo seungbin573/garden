@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 정원 가꾸기 🌱</title>
+<style>
+:root {
+  --green:#326b45;
+  --dark:#263d30;
+  --cream:#f8f7ef;
+  --orange:#c66b35;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--cream);
+  color:var(--dark);
+  font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+button,input { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,input:focus-visible {
+  outline:3px solid #e4a73c;
+  outline-offset:3px;
+}
+header {
+  background:#e6f0df;
+  padding:25px 20px;
+  text-align:center;
+  border-bottom:2px solid #d3e2cc;
+}
+header h1 { margin:0; font-size:clamp(26px,5vw,38px); }
+header p { margin:9px 0 0; color:#647568; }
+main { max-width:1050px; margin:auto; padding:22px 15px 60px; }
+.card {
+  background:white;
+  border:1px solid #e5e9df;
+  border-radius:20px;
+  padding:23px;
+  margin-bottom:18px;
+  box-shadow:0 5px 20px #203b2910;
+}
+h2 { font-size:21px; margin:0 0 17px; }
+.balance { text-align:center; }
+.balance small { color:#728075; }
+.balance strong {
+  display:block;
+  font-size:clamp(32px,7vw,47px);
+  color:var(--green);
+  margin:8px 0;
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+.stat {
+  background:#f1f6ed;
+  border-radius:13px;
+  padding:13px 5px;
+}
+.stat b { display:block; font-size:19px; margin-top:5px; }
+.garden {
+  position:relative;
+  background:linear-gradient(#cceaf1 0%,#e5f6e8 65%,#9acb80 65%);
+  border-radius:18px;
+  min-height:310px;
+  overflow:hidden;
+  padding:20px;
+}
+.sun {
+  position:absolute;
+  right:35px;top:25px;
+  font-size:43px;
+}
+.cloud { position:absolute;top:35px;left:25px;font-size:40px; }
+.garden-items {
+  position:relative;
+  z-index:2;
+  min-height:245px;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:flex-end;
+  align-items:flex-end;
+  justify-content:center;
+  gap:9px;
+  padding:25px 5px 5px;
+}
+.plant {
+  font-size:clamp(35px,6vw,56px);
+  display:inline-block;
+  animation:grow .45s ease-out both;
+  filter:drop-shadow(0 4px 2px #34502c30);
+}
+@keyframes grow {
+  from { transform:scale(.15) translateY(30px);opacity:0; }
+  to { transform:scale(1) translateY(0);opacity:1; }
+}
+.empty {
+  background:#ffffffd9;
+  padding:18px;
+  border-radius:15px;
+  text-align:center;
+  line-height:1.8;
+  margin:auto;
+}
+.progress-bg {
+  height:13px;
+  background:#e9eee5;
+  border-radius:20px;
+  overflow:hidden;
+  margin:12px 0;
+}
+.progress-fill {
+  width:0%;
+  height:100%;
+  background:#74ae69;
+  transition:width .35s;
+}
+.row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+label { display:block; font-weight:bold; margin-bottom:9px; }
+input {
+  width:100%;
+  border:2px solid #dbe4d8;
+  border-radius:12px;
+  padding:14px;
+  background:#fff;
+  font-size:17px;
+}
+button {
+  border:0;
+  border-radius:12px;
+  padding:14px 17px;
+  font-weight:bold;
+  transition:transform .15s,background .15s;
+}
+button:active { transform:scale(.97); }
+.primary { background:var(--green);color:white; }
+.spend { background:var(--orange);color:white; }
+.secondary { background:#eaf0e7;color:var(--dark); }
+.danger { background:#fce8e3;color:#a2382c; }
+.full { width:100%;margin-top:12px; }
+.quick {
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.quick button { background:#eef4eb; padding:9px 12px; }
+.message {
+  min-height:25px;
+  margin-top:12px;
+  color:var(--green);
+  font-weight:bold;
+}
+.error { color:#b73729; }
+.letter {
+  background:#fff8e9;
+  border:2px dashed #e4c993;
+  border-radius:16px;
+  padding:23px;
+  margin-top:15px;
+  line-height:1.9;
+  display:none;
+}
+.letter h3 { margin-top:0;color:#875c2c; }
+.history {
+  list-style:none;
+  padding:0;
+  margin:0;
+  max-height:250px;
+  overflow:auto;
+}
+.history li {
+  padding:12px 0;
+  border-bottom:1px solid #e8ece5;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+.muted { color:#778278;font-size:13px; }
+.footer-actions {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+@media(max-width:650px) {
+  .row { grid-template-columns:1fr; }
+  .stats { gap:5px; }
+  .stat { font-size:12px; }
+  .stat b { font-size:15px; }
+  .card { padding:17px; }
+  .garden { min-height:260px; }
+  .garden-items { min-height:195px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌱 나의 정원 가꾸기</h1>
+  <p>돈을 모을수록 자라나는 나만의 작은 정원</p>
+</header>
+
+<main>
+  <section class="card balance">
+    <small>현재 나의 저축 잔액</small>
+    <strong id="balance">0원</strong>
+    <p id="level">🌱 새싹 정원사</p>
+    <div class="stats">
+      <div class="stat">🌷 식물 수<b id="plantCount">0개</b></div>
+      <div class="stat">💰 누적 저축<b id="totalSaved">0원</b></div>
+      <div class="stat">🛒 누적 소비<b id="totalSpent">0원</b></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🏡 나의 정원</h2>
+    <!-- 디자인 의도:
+      사용자는 숫자보다 성장하는 정원을 먼저 보며
+      저축의 성취감을 직관적으로 느끼도록 한다. -->
+    <div class="garden" aria-label="저축으로 성장하는 정원">
+      <div class="sun" aria-hidden="true">☀️</div>
+      <div class="cloud" aria-hidden="true">☁️</div>
+      <div id="gardenItems" class="garden-items"></div>
+    </div>
+    <p id="nextGoal" class="muted"></p>
+    <div class="progress-bg">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+    <p class="muted">1,000원마다 식물 1개가 자라요. 최대 60개까지 화면에 표시됩니다.</p>
+  </section>
+
+  <div class="row">
+    <section class="card">
+      <h2>💚 저축하기</h2>
+      <label for="saveInput">저축할 금액</label>
+      <input id="saveInput" type="number" min="1000" step="1000"
+        placeholder="예: 1000" inputmode="numeric">
+      <div class="quick">
+        <button type="button" onclick="addAmount('saveInput',1000)">+1천원</button>
+        <button type="button" onclick="addAmount('saveInput',5000)">+5천원</button>
+        <button type="button" onclick="addAmount('saveInput',10000)">+1만원</button>
+      </div>
+      <button class="primary full" onclick="saveMoney()">🌼 저축하고 식물 키우기</button>
+    </section>
+
+    <section class="card">
+      <h2>🧡 소비하기</h2>
+      <label for="spendInput">소비할 금액</label>
+      <input id="spendInput" type="number" min="1000" step="1000"
+        placeholder="예: 1000" inputmode="numeric">
+      <div class="quick">
+        <button type="button" onclick="addAmount('spendInput',1000)">+1천원</button>
+        <button type="button" onclick="addAmount('spendInput',5000)">+5천원</button>
+        <button type="button" onclick="addAmount('spendInput',10000)">+1만원</button>
+      </div>
+      <button class="spend full" onclick="spendMoney()">🍂 소비하고 정원 변화 보기</button>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>💌 행운의 편지</h2>
+    <p>1,000원 이상 저축하면 특별한 편지를 만들 수 있어요!</p>
+    <label for="nickname">편지를 받을 닉네임</label>
+    <input id="nickname" maxlength="20" placeholder="예: 참치김밥">
+    <button class="primary full" onclick="sendLetter()">💌 행운의 편지 보내기</button>
+    <div class="letter" id="letter" aria-live="polite"></div>
+    <p class="muted">편지는 화면에서만 생성되며 실제 문자나 이메일로 전송되지 않습니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>📖 나의 저축 기록</h2>
+    <ul class="history" id="history"></ul>
+  </section>
+
+  <section class="card">
+    <h2>⚙️ 정원 관리</h2>
+    <div class="footer-actions">
+      <button class="secondary" onclick="undoLast()">↩ 마지막 거래 취소</button>
+      <button class="danger" onclick="resetAll()">🗑 전체 초기화</button>
+    </div>
+    <p class="muted">이 서비스는 실제 은행 계좌와 연결되지 않는 체험용 저축 게임입니다.</p>
+  </section>
+  <p id="message" class="message" role="status" aria-live="polite"></p>
+</main>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "myGarden_v1";
+const MAX_BALANCE = 1000000000;
+
+// 디자인 의도:
+// 정원은 잔액으로부터 계산한다.
+// 거래를 취소하거나 소비할 때도 항상 같은 결과를 보여준다.
+let state = {
+  balance:0,
+  saved:0,
+  spent:0,
+  history:[]
+};
+
+const money = n => n.toLocaleString("ko-KR") + "원";
+const el = id => document.getElementById(id);
+
+function notify(text, error=false) {
+  const box=el("message");
+  box.textContent=text;
+  box.className="message"+(error?" error":"");
+}
+
+function persist() {
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  } catch(e) {
+    notify("브라우저 저장 공간을 사용할 수 없어요.",true);
+  }
+}
+
+function load() {
+  try {
+    const data=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(data && Number.isSafeInteger(data.balance)
+      && data.balance>=0 && Array.isArray(data.history)) {
+      state=data;
+    }
+  } catch(e) {
+    notify("저장된 기록을 불러오지 못했어요.",true);
+  }
+}
+
+function addAmount(id,amount) {
+  const input=el(id);
+  const current=Number(input.value)||0;
+  input.value=current+amount;
+  input.focus();
+}
+
+function validate(id) {
+  const input=el(id);
+  const value=Number(input.value);
+  if(input.value.trim()==="" ||
+    !Number.isSafeInteger(value) ||
+    value<=0 || value%1000!==0) {
+    notify("1,000원 단위의 올바른 금액을 입력해 주세요.",true);
+    input.focus();
+    return null;
+  }
+  if(value>MAX_BALANCE) {
+    notify("한 번에 입력할 수 있는 최대 금액은 10억 원입니다.",true);
+    return null;
+  }
+  return value;
+}
+
+function record(type,amount) {
+  state.history.unshift({
+    type,amount,
+    date:new Date().toLocaleString("ko-KR")
+  });
+  // 실행 취소를 위해 최근 거래 100건 보관
+  state.history=state.history.slice(0,100);
+  persist();
+  render();
+}
+
+function saveMoney() {
+  const amount=validate("saveInput");
+  if(amount===null)return;
+  if(state.balance+amount>MAX_BALANCE) {
+    notify("저축 잔액은 최대 10억 원까지 가능해요.",true);
+    return;
+  }
+  state.balance+=amount;
+  state.saved+=amount;
+  record("save",amount);
+  el("saveInput").value="";
+  notify("🌸 "+money(amount)+" 저축 성공! 정원이 자랐어요.");
+}
+
+function spendMoney() {
+  const amount=validate("spendInput");
+  if(amount===null)return;
+  if(amount>state.balance) {
+    notify("잔액이 부족해요. 현재 잔액은 "+money(state.balance)+"이에요.",true);
+    return;
+  }
+  state.balance-=amount;
+  state.spent+=amount;
+  record("spend",amount);
+  el("spendInput").value="";
+  notify("🍂 "+money(amount)+" 소비했어요. 정원도 조금 작아졌어요.");
+}
+
+function getLevel(balance) {
+  if(balance>=100000)return "🌳 전설의 정원사";
+  if(balance>=50000)return "🌲 숲의 수호자";
+  if(balance>=20000)return "🌻 꽃밭 정원사";
+  if(balance>=5000)return "🌿 초보 정원사";
+  return "🌱 새싹 정원사";
+}
+
+function renderGarden() {
+  const count=Math.min(Math.floor(state.balance/1000),60);
+  const garden=el("gardenItems");
+  garden.replaceChildren();
+
+  if(count===0) {
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent="🌱 아직 텅 빈 정원이에요. 첫 1,000원을 저축해 보세요!";
+    garden.appendChild(empty);
+  } else {
+    const plants=["🌷","🌼","🌸","🌻","🌿","🌺"];
+    for(let i=0;i<count;i++) {
+      let plant=plants[i%plants.length];
+      if(i>=9 && i%5===0)plant="🌳";
+      if(i>=19 && i%7===0)plant="🌲";
+      if(i>=39 && i%11===0)plant="🌴";
+
+      const span=document.createElement("span");
+      span.className="plant";
+      span.textContent=plant;
+      span.setAttribute("aria-hidden","true");
+      span.style.animationDelay=Math.min(i*0.025,0.5)+"s";
+      garden.appendChild(span);
+    }
+  }
+
+  el("plantCount").textContent=count+"개";
+  const remainder=state.balance%1000;
+  const needed=remainder===0?1000:1000-remainder;
+  el("nextGoal").textContent=count===60
+    ?"🏆 정원이 가득 찼어요! 계속 저축할 수 있어요."
+    :"다음 식물까지 "+money(needed)+" 남았어요.";
+  el("progress").style.width=count===60?"100%":(remainder/1000*100)+"%";
+}
+
+function renderHistory() {
+  const list=el("history");
+  list.replaceChildren();
+  if(state.history.length===0) {
+    const li=document.createElement("li");
+    li.textContent="아직 거래 기록이 없어요.";
+    list.appendChild(li);
+    return;
+  }
+  state.history.forEach(item=>{
+    const li=document.createElement("li");
+    const left=document.createElement("span");
+    const right=document.createElement("strong");
+    const saving=item.type==="save";
+    left.textContent=(saving?"🌱 저축":"🍂 소비")+" · "+item.date;
+    right.textContent=(saving?"+":"-")+money(item.amount);
+    right.style.color=saving?"#326b45":"#c66b35";
+    li.append(left,right);
+    list.appendChild(li);
+  });
+}
+
+function render() {
+  el("balance").textContent=money(state.balance);
+  el("totalSaved").textContent=money(state.saved);
+  el("totalSpent").textContent=money(state.spent);
+  el("level").textContent=getLevel(state.balance);
+  renderGarden();
+  renderHistory();
+}
+
+function undoLast() {
+  if(state.history.length===0) {
+    notify("취소할 거래가 없어요.",true);
+    return;
+  }
+  const last=state.history[0];
+  if(last.type==="save") {
+    if(state.balance<last.amount) {
+      notify("이미 소비된 금액이 있어 이 저축을 취소할 수 없어요.",true);
+      return;
+    }
+    state.balance-=last.amount;
+    state.saved-=last.amount;
+  } else {
+    state.balance+=last.amount;
+    state.spent-=last.amount;
+  }
+  state.history.shift();
+  persist();
+  render();
+  notify("↩ 마지막 거래를 취소했어요.");
+}
+
+function resetAll() {
+  if(!confirm("정원, 저축 금액, 거래 기록을 모두 초기화할까요?"))return;
+  state={balance:0,saved:0,spent:0,history:[]};
+  el("letter").style.display="none";
+  el("letter").replaceChildren();
+  el("nickname").value="";
+  el("saveInput").value="";
+  el("spendInput").value="";
+  persist();
+  render();
+  notify("🌱 새로운 정원을 시작했어요!");
+}
+
+function sendLetter() {
+  const name=el("nickname").value.trim();
+  if(!name) {
+    notify("편지를 받을 닉네임을 입력해 주세요.",true);
+    el("nickname").focus();
+    return;
+  }
+  if(state.saved<1000) {
+    notify("먼저 1,000원 이상 저축해야 편지를 만들 수 있어요.",true);
+    return;
+  }
+
+  // 번호는 체험용 무작위 번호이며 실제 수신자가 아니다.
+  const number=Math.floor(Math.random()*900000)+100000;
+  const messages=[
+    "오늘의 작은 저축이 내일의 큰 행복이 될 거예요.",
+    "당신이 심은 작은 씨앗은 언젠가 멋진 숲이 될 거예요.",
+    "조금씩 꾸준히 나아가는 당신을 응원해요!",
+    "행운은 기다리는 사람보다 준비하는 사람에게 찾아와요.",
+    "오늘도 멋진 정원을 가꾼 당신에게 박수를 보내요!"
+  ];
+  const msg=messages[Math.floor(Math.random()*messages.length)];
+  const box=el("letter");
+  box.replaceChildren();
+
+  const title=document.createElement("h3");
+  title.textContent="💌 "+name+"님에게 도착한 행운의 편지";
+  const info=document.createElement("p");
+  info.textContent="행운 번호: #"+number;
+  const body=document.createElement("p");
+  body.textContent=msg;
+  const ending=document.createElement("p");
+  ending.textContent="🌷 나의 정원 가꾸기에서 보냄";
+
+  box.append(title,info,body,ending);
+  box.style.display="block";
+  notify("💌 "+name+"님을 위한 행운의 편지가 완성됐어요!");
+  box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+load();
+render();
+</script>
+</body>
+</html>
